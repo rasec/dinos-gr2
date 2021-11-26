@@ -1,0 +1,41 @@
+.container {
+  width: 600px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.container .clip {
+  width: 100%;
+}
+.loaderContainer {
+  width: 60px;
+  margin: auto;
+}
+
+.formitem {
+  padding: 10px 0;
+}
+
+.select {
+  width: 300px;
+}
+
+.userheader {
+  width: 400px;
+  height: 80px;
+  line-height: 80px;
+  margin: 0 auto;
+  background-color: rgb(41, 41, 41);
+  border-radius: 10px;
+  padding: 0 50px;
+  color: white;
+  margin-bottom: 20px;
+  button {
+    background-color: white;
+    color: #303030;
+    padding: 5px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+}

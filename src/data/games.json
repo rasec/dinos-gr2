@@ -1,0 +1,149 @@
+[
+  {
+    "id": 0,
+    "name": "Dark Souls",
+    "acronym": "DS1",
+    "splits": [
+      {
+        "id": 0,
+        "name": "Asylum"
+      },
+      {
+        "id": 1,
+        "name": "Setup"
+      },
+      {
+        "id": 2,
+        "name": "Gargoyles"
+      },
+      {
+        "id": 3,
+        "name": "Queelag"
+      },
+      {
+        "id": 4,
+        "name": "Sens Disco"
+      },
+      {
+        "id": 5,
+        "name": "Anor Londo"
+      },
+      {
+        "id": 6,
+        "name": "Owen S"
+      },
+      {
+        "id": 7,
+        "name": "Pinwheel"
+      },
+      {
+        "id": 8,
+        "name": "Nito"
+      },
+      {
+        "id": 9,
+        "name": "Sif"
+      },
+      {
+        "id": 10,
+        "name": "Donde esta..."
+      },
+      {
+        "id": 11,
+        "name": "Kings"
+      },
+      {
+        "id": 12,
+        "name": "Bed of Chaos"
+      },
+      {
+        "id": 13,
+        "name": "Jwyn"
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "name": "Dark Souls 2",
+    "acronym": "DS2",
+    "splits": [
+      { "id": 0, "name" : "Setup" },
+      { "id": 1, "name" : "Giant" },
+      { "id": 2, "name" : "Bastille" },
+      { "id": 3, "name" : "Skorpion Waifu" },
+      { "id": 4, "name" : "Ain't no joke" },
+      { "id": 5, "name" : "Flexile" },
+      { "id": 6, "name" : "KENW 4x" },
+      { "id": 7, "name" : "Drangleic" },
+      { "id": 8, "name" : "Looking Glass" },
+      { "id": 9, "name" : "Watertemple" },
+      { "id": 10, "name" : "Velstadt" },
+      { "id": 11, "name" : "Guardian Drake" },
+      { "id": 12, "name" : "Pog Giant" },
+      { "id": 13, "name" : "monkaw" }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Dark Souls 3",
+    "acronym": "DS3",
+    "splits": [
+      { "id": 0, "name" : "Gundyr" },
+      { "id": 1, "name" : "Vordt" },
+      { "id": 2, "name" : "Abyss Widers" },
+      { "id": 3, "name" : "Vswed" },
+      { "id": 4, "name" : "Dancer" },
+      { "id": 5, "name" : "DSA" },
+      { "id": 6, "name" : "Harry Potter" },
+      { "id": 7, "name" : "Harry Potter" },
+      { "id": 8, "name" : "Mike" },
+      { "id": 9, "name" : "Yhormo el enormo" },
+      { "id": 10, "name" : "Sully" },
+      { "id": 11, "name" : "Snekman" },
+      { "id": 12, "name" : "Cheese" },
+      { "id": 13, "name" : "Cinder" }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Demon's Souls",
+    "acronym": "DeS",
+    "splits": [
+      { "id": 0, "name": "Phalanx" },
+      { "id": 1, "name": "Clever Rat's" },
+      { "id": 2, "name": "fat dolphin" },
+      { "id": 3, "name": "orange cum soldier" },
+      { "id": 4, "name": "Storm King" },
+      { "id": 5, "name": "Type A Spider" },
+      { "id": 6, "name": "Type B Lurker" },
+      { "id": 7, "name": "Dragon God" },
+      { "id": 8, "name": "Wideol" },
+      { "id": 9, "name": "Penetrator" },
+      { "id": 10, "name": "False King" },
+      { "id": 11, "name": "Maneater/Monk" },
+      { "id": 12, "name": "Valley of Plenty" },
+      { "id": 13, "name": "Dirty Astraea" }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Bloodborne",
+    "acronym": "BB",
+    "splits": [
+      { "id": 0, "name": "Yharnan" },
+      { "id": 1, "name": "Oiling the Dogo" },
+      { "id": 2, "name": "Old Yharnan" },
+      { "id": 3, "name": "BSB" },
+      { "id": 4, "name": "Amelia" },
+      { "id": 5, "name": "Snek Forest" },
+      { "id": 6, "name": "Nazgul" },
+      { "id": 7, "name": "Rom.com" },
+      { "id": 8, "name": "Chunk City" },
+      { "id": 9, "name": "rEEREEborn" },
+      { "id": 10, "name": "blobby school" },
+      { "id": 11, "name": "Nightmare" },
+      { "id": 12, "name": "Nightmare" },
+      { "id": 13, "name": "Wide Nurse" }
+    ]
+  }
+]

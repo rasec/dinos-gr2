@@ -1,0 +1,78 @@
+
+
+.row {
+  width: 240px;
+  display: block;
+  .td {
+    padding: 2px 10px;
+    display: inline-block;
+    border-bottom: 1px solid white;
+  }
+  .split {
+    width: 170px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
+
+.table {
+  display: inline-block;
+  padding: 0 5px;
+  background-color: black;
+  color: white;
+}
+
+.row {
+  .accumulator {
+    width: 30px;
+  }
+}
+
+.logoContainer {
+  width: 240px;
+  height: 100px
+}
+
+.logo {
+  width: 240px;
+  vertical-align: middle;
+}
+
+.stats {
+  .row {
+    width: 500px;
+    cursor: pointer;
+    .run {
+      width: 350px;
+    }
+    .stat {
+      width: 100px;
+    }
+  }
+}
+
+.hit {
+  cursor: pointer;
+  color: red;
+}
+
+.hitClipsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  
+  .content {
+    top: 50%;
+    left: 50%;
+    max-width: 80%;
+    min-width: 40%;
+    background: #FFF;
+    padding: 50px;
+    border-radius: 10px;
+    li {
+      padding: 10px 0;
+    }
+  }
+}

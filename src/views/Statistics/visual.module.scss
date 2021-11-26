@@ -1,0 +1,14 @@
+.statBlock {
+  display: block;
+  margin: 0 auto;
+  &.long {
+    width: 1400px;
+  }
+
+  .header2 {
+    margin: 0 auto;
+    max-width: 200px;
+    margin-top: 50px;
+    text-align: center;
+  }
+}

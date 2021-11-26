@@ -1,0 +1,29 @@
+
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  background-color: #282c34;
+  font-size: 1.3em;
+}
+
+nav ul{
+  margin: 0;
+}
+
+nav li {
+  display: inline-block;
+  color: white;
+}
+
+nav a {
+  padding: 20px 20px;
+  display: inline-block;
+  text-decoration: none;
+  color: white;
+}
+nav li:hover {
+  background-color: #666;
+  text-shadow: 2px 2px 2px #999;
+}

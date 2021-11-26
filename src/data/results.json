@@ -1,0 +1,202 @@
+[
+  {
+    "date": "2021-03-01",
+    "runs": [
+      {
+        "includesHit": true,
+        "splitHit": 1,
+        "selectedGame": 0,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/RichAmusedEelPeteZaroll-vbATIY6z7GepzXn2"
+      },
+      {
+        "includesHit": false,
+        "selectedGame": 0,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/CrazyPrettyPartridgeLitty-Zk4zM3D-AjLQKLx6"
+      },
+      {
+        "includesHit": true,
+        "splitHit": 6,
+        "selectedGame": 4,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/SingleCallousYakVoteYea-8ny6X1JCXf5DsWb6"
+      },
+      {
+        "includesHit": false,
+        "selectedGame": 2,
+        "partial": true,
+        "startSplit": 0,
+        "endSplit": 5
+      }
+    ]
+  },
+  {
+    "date": "2021-03-02",
+    "runs": [
+      {
+        "includesHit": false,
+        "selectedGame": 2,
+        "partial": true,
+        "startSplit": 5,
+        "clip": "https://clips.twitch.tv/SoftAnimatedTroutVoteNay-bBhIqn7izd1BNHKV"
+      },
+      {
+        "includesHit": false,
+        "selectedGame": 1,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/ShortHandsomePlumSeemsGood-rT1MqQLbE_k2V2rd"
+      }
+    ]
+  },
+  {
+    "date": "2021-03-03",
+    "runs": [
+      {
+        "includesHit": true,
+        "selectedGame": 0,
+        "splitHit": 6,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/ElatedSpoopyDogeDancingBaby-7tPLeWawLf2XianG"
+      },
+      {
+        "includesHit": true,
+        "selectedGame": 3,
+        "splitHit": 3,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/SuperDepressedScorpionHassaanChop-GcI2JIyC9gp-RXrC"
+      },
+      {
+        "includesHit": false,
+        "selectedGame": 2,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/CaringObliqueMetalSmoocherZ-mme-wSkNVKngmjBT"
+      }
+    ]
+  },
+  {
+    "date": "2021-03-04",
+    "runs": [
+      {
+        "includesHit": true,
+        "splitHit": 7,
+        "selectedGame": 1,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/BadBombasticCurryCharlietheUnicorn-te7Sxn3TzfTJ3KMQ"
+      },
+      {
+        "includesHit": false,
+        "selectedGame": 4,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/HilariousTriangularChickpeaCurseLit-CWqhh6I1ETvhpdmK"
+      }
+    ]
+  },
+  {
+    "date": "2021-03-05",
+    "runs": [
+      {
+        "includesHit": true,
+        "splitHit": 7,
+        "selectedGame": 2,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/PolishedSmellyAubergineLitty-QmK5VQfOZFsg1z8H"
+      },
+      {
+        "includesHit": true,
+        "splitHit": 13,
+        "selectedGame": 2,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/CogentDreamyRamenKreygasm-RxU_hbfoIC23pYFD"
+      },
+      {
+        "includesHit": true,
+        "splitHit": 1,
+        "selectedGame": 0,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/LovelyEncouragingSrirachaOSsloth-6eXDoXUV-COEBAqr"
+      },
+      {
+        "includesHit": true,
+        "splitHit": 0,
+        "selectedGame": 0,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/InquisitiveShortVanillaDatSheffy-BTX4YEPUQRlqSlK4"
+      },
+      {
+        "includesHit": true,
+        "splitHit": 3,
+        "selectedGame": 0,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/SpicyAuspiciousSkunkNononoCat-WJyWeai7PzigVV5Q"
+      },
+      {
+        "includesHit": true,
+        "splitHit": 1,
+        "selectedGame": 0,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/CharmingSpunkyFerretFUNgineer-EWzpnVcOLwuI4AjL"
+      },
+      {
+        "includesHit": true,
+        "splitHit": 2,
+        "selectedGame": 0,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/BillowingClearSquirrelCorgiDerp-cEbyfTl-FalyjjYV"
+      }
+    ]
+  },
+  {
+    "date": "2021-03-07",
+    "runs": [
+      {
+        "includesHit": true,
+        "splitHit": 6,
+        "selectedGame": 0,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/SullenNastyCaterpillarWTRuck-1k3v9fUK8c6qbx28"
+      },
+      {
+        "includesHit": false,
+        "selectedGame": 2,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/OilyLaconicHamsterDendiFace-NERKH_BGQWt6zypb"
+      },
+      {
+        "includesHit": false,
+        "selectedGame": 4,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/DoubtfulFairMeatloafANELE-VcSFUyGwF08vZYC6"
+      }
+    ]
+  },
+  {
+    "date": "2021-03-08",
+    "runs": [
+      {
+        "includesHit": false,
+        "selectedGame": 1,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/EasySneakyIguanaSoBayed-woeDQDg9eXLE7DPy"
+      }
+    ]
+  },
+  {
+    "date": "2021-03-09",
+    "runs": [
+      {
+        "includesHit": false,
+        "selectedGame": 0,
+        "partial": false,
+        "clip": "https://clips.twitch.tv/StormyLovelyPeanutHassanChop-wLfx9piIt4b0IkqE"
+      },
+      {
+        "includesHit": false,
+        "selectedGame": 3,
+        "partial": true,
+        "startSplit": 0,
+        "endSplit": 2
+      }
+    ]
+  }
+]
