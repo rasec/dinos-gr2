@@ -87,7 +87,7 @@ const getLastWeekData = (runs) => {
     const runsGroupedByDateValues = Object.values(lastWeekRunsGroupedByDate);
     const nonFilterRunsGroupedByDateValues = Object.values(nonFilterRunsGroupedByDate);
     let data = runsGroupedByDateValues.map(run => run.length);
-    let dataRatio = runsGroupedByDateValues.map((run, index) => (run.length / nonFilterRunsGroupedByDateValues[index].length) * 100);
+    let dataRatio = runsGroupedByDateValues.map((run, index) => nonFilterRunsGroupedByDateValues[index] ? (run.length / nonFilterRunsGroupedByDateValues[index].length) * 100 : 0);
 
     let lastWeekRunsGrouped = data.map((dataItem, index) => [labels[index], dataItem]);
     lastWeekRunsGrouped = [['Day', 'Succesful Runs'], ...lastWeekRunsGrouped];
