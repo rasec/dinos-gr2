@@ -257,6 +257,7 @@ function Visual() {
                             },
                             vAxis: {
                                 title: 'Succesful Runs %',
+                                minValue: 0,
                             },
                         }}
                     />
@@ -281,7 +282,7 @@ function Visual() {
                             },
                             vAxis: {
                                 title: 'Succesful Runs',
-
+                                minValue: 0,
                             },
                         }}
                     />
@@ -303,6 +304,7 @@ function Visual() {
                             },
                             vAxis: {
                                 title: 'Succesful Runs %',
+                                minValue: 0,
                             },
                         }}
                     />

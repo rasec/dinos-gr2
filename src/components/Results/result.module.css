@@ -44,6 +44,8 @@
   left: 50%;
   max-width: 80%;
   min-width: 20%;
+  overflow: scroll;
+  max-height: 80%;
   background: #FFF;
   padding: 50px;
   border-radius: 10px;
