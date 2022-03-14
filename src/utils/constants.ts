@@ -1,7 +1,7 @@
-export const STATUS = {
-    FAILED: 'failed',
-    SUCCEEDED: 'succeeded',
-    NOTENDED: 'notended'
+export enum STATUS {
+  FAILED = 'failed',
+  SUCCEEDED = 'succeeded',
+  NOTENDED = 'notended'
 };
 
 export const SPLITS_PER_RUN = 14;

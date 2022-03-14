@@ -2,42 +2,57 @@ import React, { useContext } from 'react';
 import { Chart } from "react-google-charts";
 import { groupBy, successRunFilter, calculateSuccessRate } from '../../utils/utils';
 
-import RunContext from "../../store/runs-context";
+import Run from '../../types/run';
+
+import RunsContext from "../../store/runs-context";
 
 import styles from './visual.module.scss';
 
-const getMMDDDate = dateInput => {
+const getMMDDDate = (dateInput: string): string => {
     const date = new Date(dateInput);
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
+    let month: number = date.getMonth() + 1;
+    let monthString: string = `${month}`;
+    let day: number = date.getDate();
+    let dayString: string = `${day}`;
     if (day < 10) {
-        day = `0${day}`;
+        dayString = `0${day}`;
     }
     if (month < 10) {
-        month = `0${month}`;
+        monthString = `0${month}`;
     }
 
-    return `${day}/${month}`;
-}
+    return `${dayString}/${monthString}`;
+};
 
-const getYYYYMMDDDate = date => {
-    const year = date.getFullYear();
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
+const getYYYYMMDDDate = (date?: Date): string => {
+    if (!date) {
+        return '';
+    }
+    let typedDate;
+    if(typeof date === 'string') {
+        typedDate = new Date(date);
+    } else {
+        typedDate = date;
+    }
+    const year = typedDate.getFullYear();
+    let month = typedDate.getMonth() + 1;
+    let monthString: string = `${month}`;
+    let day = typedDate.getDate();
+    let dayString: string = `${day}`;
     if (day < 10) {
-        day = `0${day}`;
+        dayString = `0${day}`;
     }
     if (month < 10) {
-        month = `0${month}`;
+        monthString = `0${month}`;
     }
 
-    return `${year}-${month}-${day}`;
+    return `${year}-${monthString}-${dayString}`;
 }
 
-const createDateGroups = (startDate, endDate, days = 7) => {
+const createDateGroups = (startDate: string, endDate: string, days = 7): DateObject[] => {
     let currentDate = new Date(endDate);
     let startDate2 = new Date(startDate);
-    const dateGroups = [];
+    const dateGroups = [] as DateObject[];
     let initial = true;
     while (currentDate > startDate2) {
         if (!initial) {
@@ -55,14 +70,23 @@ const createDateGroups = (startDate, endDate, days = 7) => {
     return dateGroups;
 };
 
-const createDataForGroupsPerGame = (data, groups) => {
-    const dataGrouped = [];
+interface DateObject {
+    startDate: string | Date,
+    endDate: string | Date,
+};
+
+interface Variant {
+    [key: string]: [];
+}
+
+const createDataForGroupsPerGame = (data: Run[], groups: DateObject[]) => {
+    const dataGrouped: Run[][][] = [];
     groups.forEach(() => {
-        dataGrouped.push([[], [], [], [], [], []]); // Adding all the games (6: DS1, DS2, DS3, DeS, BB, SK)
+        dataGrouped.push([[] as Run[], [] as Run[], [] as Run[], [] as Run[], [] as Run[], [] as Run[]]); // Adding all the games (6: DS1, DS2, DS3, DeS, BB, SK)
     });
     data.forEach(dateItem => {
         groups.forEach((group, groupIndex) => {
-            if (dateItem.date >= group.startDate && dateItem.date <= group.endDate) {
+            if (dateItem.date && (dateItem.date >= group.startDate && dateItem.date <= group.endDate)) {
                 dataGrouped[groupIndex][dateItem.selectedGame].push(dateItem);
             }
         });
@@ -70,24 +94,49 @@ const createDataForGroupsPerGame = (data, groups) => {
     return dataGrouped;
 }
 
-const getLastWeekData = (runs) => {
-    const weekEndDate = new Date(runs[runs.length - 1].date);
-    let weekStartDate = new Date(weekEndDate);
+const getLastWeekData = (runs: Run[]) => {
+    const weekEndDateNoTyped = runs[runs.length - 1].date;
+    let weekEndDate;
+    if(typeof weekEndDateNoTyped === 'string') {
+        weekEndDate = new Date(weekEndDateNoTyped);
+    } else {
+        weekEndDate = weekEndDateNoTyped;
+    }
+    let weekStartDate = weekEndDate;
+    if (typeof weekStartDate === 'undefined') {
+        return;
+    }
     weekStartDate.setDate(weekStartDate.getDate() - 7);
-    const lastWeekRuns = runs.filter(run => new Date(run.date) > weekStartDate);
+    const lastWeekRuns = runs.filter(run => {
+        let runDateTimestamp : number = 0;
+        if (!run.date || typeof weekStartDate === 'undefined') {
+            return false;
+        }
+        if(typeof run.date === 'string') {
+            runDateTimestamp = new Date(run.date).getTime();
+        } else {
+            runDateTimestamp = run.date.getTime();
+        }
+        return runDateTimestamp > weekStartDate.getTime();
+    });
     const splicedSuccesfulRuns = lastWeekRuns.filter(successRunFilter);
-    const runsGroupedByDate = groupBy(splicedSuccesfulRuns, 'date');
+    const runsGroupedByDate = groupBy(splicedSuccesfulRuns as [], 'date');
     const lastWeekRunsGroupedByDate = {};
     for (let i = 0; i < 7; i++) {
         weekStartDate.setDate(weekStartDate.getDate() + 1);
-        lastWeekRunsGroupedByDate[getYYYYMMDDDate(weekStartDate)] = runsGroupedByDate[getYYYYMMDDDate(weekStartDate)] || [];
+        const weekStartDateYYYYMMDD: string = getYYYYMMDDDate(weekStartDate);
+        const value = (runsGroupedByDate as Variant)[weekStartDateYYYYMMDD] || [];
+        (lastWeekRunsGroupedByDate as Variant)[weekStartDateYYYYMMDD] = value;
     }
-    const nonFilterRunsGroupedByDate = groupBy(lastWeekRuns, 'date');
-    let labels = Object.keys(lastWeekRunsGroupedByDate).sort((a, b) => a - b);
-    const runsGroupedByDateValues = Object.values(lastWeekRunsGroupedByDate);
-    const nonFilterRunsGroupedByDateValues = Object.values(nonFilterRunsGroupedByDate);
+    const nonFilterRunsGroupedByDate = groupBy(lastWeekRuns as [], 'date');
+    let labels = Object.keys(lastWeekRunsGroupedByDate).sort((a: string, b: string) => parseInt(a, 10) - parseInt(b, 10));
+    const runsGroupedByDateValues: Run[][] = Object.values(lastWeekRunsGroupedByDate);
+    const nonFilterRunsGroupedByDateValues: Run[][] = Object.values(nonFilterRunsGroupedByDate);
     let data = runsGroupedByDateValues.map(run => run.length);
-    let dataRatio = runsGroupedByDateValues.map((run, index) => nonFilterRunsGroupedByDateValues[index] ? (run.length / nonFilterRunsGroupedByDateValues[index].length) * 100 : 0);
+    let dataRatio = runsGroupedByDateValues.map((run, index) => {
+        debugger;
+        return nonFilterRunsGroupedByDateValues[index] ? (run.length / nonFilterRunsGroupedByDateValues[index].length) * 100 : 0
+    });
 
     let lastWeekRunsGrouped = data.map((dataItem, index) => [labels[index], dataItem]);
     lastWeekRunsGrouped = [['Day', 'Succesful Runs'], ...lastWeekRunsGrouped];
@@ -96,23 +145,24 @@ const getLastWeekData = (runs) => {
     lastWeekRunsGroupedRatio = [['Day', 'Succesful Runs %'], ...lastWeekRunsGroupedRatio];
 
     return { lastWeekRuns: lastWeekRunsGrouped, lastWeekRunsRatio: lastWeekRunsGroupedRatio };
+
 };
 
-const getPerWeekRuns = ({ succesfulRunsWeekly, dateGroups }) => {
+const getPerWeekRuns = ({ succesfulRunsWeekly, dateGroups }: { succesfulRunsWeekly: Run[][][], dateGroups: DateObject[] }) => {
 
     let perWeekRuns = succesfulRunsWeekly.map((weeklyRuns, index) => {
         // const totalAcc = weeklyRuns.reduce((acc, item) => acc += item.length, 0);
-        return [`${getMMDDDate(dateGroups[index].startDate)} to ${getMMDDDate(dateGroups[index].endDate)}`, ...weeklyRuns.map(weeklyRunsPerGame => weeklyRunsPerGame.length)]
+        return [`${getMMDDDate(dateGroups[index].startDate.toString())} to ${getMMDDDate(dateGroups[index].endDate.toString())}`, ...weeklyRuns.map(weeklyRunsPerGame => weeklyRunsPerGame.length)]
     });
     return [['Week', 'Succesful DS1', 'Succesful DS2', 'Succesful DS3', 'Succesful DeS', 'Succesful BB', 'Succesful SK'], ...perWeekRuns];
 };
-const getPerWeekRunsRatio = ({ runsWeekly, succesfulRunsWeekly, dateGroups }) => {
+const getPerWeekRunsRatio = ({ runsWeekly, succesfulRunsWeekly, dateGroups }: { runsWeekly: Run[][][], succesfulRunsWeekly: Run[][][], dateGroups: DateObject[] }) => {
 
     let perWeekRunsRatio = runsWeekly.map((weeklyRuns, index) => {
         const succesfulweeklyRuns = succesfulRunsWeekly[index];
         const totalAcc = weeklyRuns.reduce((acc, item) => acc += item.length, 0);
         const succesfulTotalAcc = succesfulweeklyRuns.reduce((acc, item) => acc += item.length, 0);
-        return [`${getMMDDDate(dateGroups[index].startDate)} to ${getMMDDDate(dateGroups[index].endDate)}`, (succesfulTotalAcc / totalAcc) * 100, ...weeklyRuns.map((weeklyRunsPerGame, perGameIndex) => {
+        return [`${getMMDDDate(dateGroups[index].startDate.toString())} to ${getMMDDDate(dateGroups[index].endDate.toString())}`, (succesfulTotalAcc / totalAcc) * 100, ...weeklyRuns.map((weeklyRunsPerGame, perGameIndex) => {
             if (weeklyRunsPerGame.length === 0) {
                 return 0;
             }
@@ -123,11 +173,11 @@ const getPerWeekRunsRatio = ({ runsWeekly, succesfulRunsWeekly, dateGroups }) =>
     return [['Week', 'Succesful Runs %', 'Succesful DS1 %', 'Succesful DS2 %', 'Succesful DS3 %', 'Succesful DeS %', 'Succesful BB %', 'Succesful SK %'], ...perWeekRunsRatio];
 };
 
-const getPerWeekData = (runs) => {
-    const weekEndDate = new Date(runs[runs.length - 1].date);
+const getPerWeekData = (runs: Run[]) => {
+    const weekEndDate = runs[runs.length - 1].date;
     const succesfulRuns = runs.filter(successRunFilter);
 
-    const dateGroups = createDateGroups('2021-09-20', getYYYYMMDDDate(weekEndDate));
+    const dateGroups: DateObject[] = createDateGroups('2021-09-20', getYYYYMMDDDate(weekEndDate));
     dateGroups.reverse();
     const succesfulRunsWeekly = createDataForGroupsPerGame(succesfulRuns, dateGroups);
     const runsWeekly = createDataForGroupsPerGame(runs, dateGroups);
@@ -139,43 +189,56 @@ const getPerWeekData = (runs) => {
     return { perWeekRuns, perWeekRunsRatio };
 }
 
-const getCalendarData = (runs) => {
+const getCalendarData = (runs: Run[]) => {
     const succesfulRuns = runs.filter(successRunFilter);
     const dataHeader = [{ type: 'date', id: 'Date' }, { type: 'number', id: 'Sucessful runs' }];
-    const succesfulRunsGroupedByDate = groupBy(succesfulRuns, 'date');
+    const succesfulRunsGroupedByDate = groupBy(succesfulRuns as [], 'date');
     const calendarData = Object.values(succesfulRunsGroupedByDate).map((perDayRuns, index) => {
         const date = Object.keys(succesfulRunsGroupedByDate)[index];
 
-        return [new Date(date), perDayRuns.length];
+        return [new Date(date), (perDayRuns as Run[]).length];
     });
     return [dataHeader, ...calendarData];
 };
 
-const getCalendarDataRate = (runs) => {
+const getCalendarDataRate = (runs: Run[]) => {
     const succesfulRuns = runs.filter(successRunFilter);
     const dataHeader = [{ type: 'date', id: 'Date' }, { type: 'number', id: 'Sucessful runs' }];
-    const runsGroupedByDate = groupBy(runs, 'date');
-    const succesfulRunsGroupedByDate = groupBy(succesfulRuns, 'date');
+    const runsGroupedByDate = groupBy(runs as [], 'date');
+    const succesfulRunsGroupedByDate = groupBy(succesfulRuns as [], 'date');
     const calendarData = Object.values(runsGroupedByDate).map((perDayRuns, index) => {
         const date = Object.keys(runsGroupedByDate)[index];
-        const perDaySuccessfulRuns = succesfulRunsGroupedByDate[date];
+        const perDaySuccessfulRuns = (succesfulRunsGroupedByDate as Variant)[(date as string)];
 
-        let ratio = calculateSuccessRate({ successfulRuns: perDaySuccessfulRuns, totalRuns: perDayRuns });
+        let ratio = calculateSuccessRate({ successfulRuns: (perDaySuccessfulRuns as Run[]), totalRuns: (perDayRuns as Run[]) });
         return [new Date(date), ratio];
     });
     return [dataHeader, ...calendarData];
 };
 
 function Visual() {
-    const runContext = useContext(RunContext);
+    const runContext = useContext(RunsContext);
     const runs = runContext.runs;
     if (runs.length <= 0) {
         return (<>Loading Data...</>);
     }
-    const sortedRuns = runs.sort((run1, run2) => (run1.date > run2.date) ? 1 : -1);
+    const sortedRuns = runs.sort((run1, run2) => {
+        if (!run1.date) {
+            return -1;
+        }
+        if (!run2.date) {
+            return 1;
+        }
+        return (run1.date > run2.date) ? 1 : -1
+    });
     const filteredRuns = sortedRuns.filter(run => run.endSplit === undefined);
 
-    const { lastWeekRuns, lastWeekRunsRatio } = getLastWeekData(filteredRuns);
+    const lastWeedData = getLastWeekData(filteredRuns);
+    let lastWeekRuns, lastWeekRunsRatio;
+    if (lastWeedData) {
+        lastWeekRuns = lastWeedData.lastWeekRuns;
+        lastWeekRunsRatio = lastWeedData.lastWeekRunsRatio;
+    }
 
     const { perWeekRuns, perWeekRunsRatio } = getPerWeekData(filteredRuns);
 

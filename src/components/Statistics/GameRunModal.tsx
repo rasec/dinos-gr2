@@ -1,9 +1,13 @@
 import React from 'react';
-import { Modal } from '@material-ui/core';
+import { Modal } from '@mui/material';
+
+import { SplitHit } from '../../types/split';
+import Run from '../../types/run';
+import { modalTypes } from '../../types/modalTypes';
 
 import styles from './statistics.components.module.scss';
 
-function GameRunModal({runs, displayText, onClose, type }) {
+function GameRunModal({ runs, displayText, onClose, type }: { runs: SplitHit[] | Run[], displayText: string, onClose: any, type: modalTypes }) {
   const extraText = type === 'hits' ? 'Hits' : 'Runs';
   return (
     <Modal open onClose={() => onClose([])} className={styles.hitClipsContainer}>

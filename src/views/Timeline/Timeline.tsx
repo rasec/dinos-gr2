@@ -1,11 +1,14 @@
 import React, { useState, useContext } from 'react';
-import { Timeline, TimelineItem, TimelineDot, TimelineSeparator, TimelineConnector, TimelineOppositeContent, TimelineContent } from '@material-ui/lab';
-import { Paper, makeStyles, CircularProgress } from '@material-ui/core';
+import { Timeline, TimelineItem, TimelineDot, TimelineSeparator, TimelineConnector, TimelineOppositeContent, TimelineContent } from '@mui/lab';
+import { Paper, CircularProgress } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
-import GamesContext from '../../store/games-context';
-import RunsContext from '../../store/runs-context';
+import GamesContext, { GamesContextType } from '../../store/games-context';
+import RunsContext, { RunContextType } from '../../store/runs-context';
 
 import ResultModal from '../../components/Results/ResultsModal';
+
+import Run, { DateRuns } from '../../types/run';
 
 import { STATUS, SPLITS_PER_RUN } from '../../utils/constants';
 
@@ -16,8 +19,8 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: '6px 16px',
-    background: '#282c34',
-    color: '#FFF',
+    backgroundColor: '#282c34 !important',
+    color: '#FFF !important',
     cursor: 'pointer'
   },
   succeeded: {
@@ -57,16 +60,16 @@ const useStyles = makeStyles((theme) => ({
 
 const TimelineComponent = () => {
   // getModalStyle is not a pure function, we roll the style only on the first render
-  const gamesContext = useContext(GamesContext);
-  const runsContext = useContext(RunsContext);
+  const gamesContext = useContext<GamesContextType>(GamesContext);
+  const runsContext = useContext<RunContextType>(RunsContext);
 
   const games = gamesContext.games;
   const runs = runsContext.runs;
 
-  const [dateRuns, setDateRuns] = useState([]);
+  const [dateRuns, setDateRuns] = useState<Run[]>([]);
   const [hasToShowResults, showResults] = useState(false);
   const classes = useStyles();
-  const getRunStatus = (run) => {
+  const getRunStatus = (run: Run) => {
     if (run.partial && (run.endSplit && run.endSplit < SPLITS_PER_RUN - 1)) {
       return STATUS.NOTENDED;
     }
@@ -89,18 +92,18 @@ const TimelineComponent = () => {
       </>
     );
   };
-  const displayDayResults = (dateRuns) => {
+  const displayDayResults = (dateRuns: Run[]) => {
     setDateRuns(dateRuns);
     showResults(true);
   };
 
   const displayResult = () => {
     return (
-      <ResultModal runs={dateRuns} onClose={()=> showResults(false) } hasToShowResults={hasToShowResults} />
+      <ResultModal runs={dateRuns} onClose={() => showResults(false)} hasToShowResults={hasToShowResults} />
     );
   };
 
-  const displayRun = (run) => {
+  const displayRun = (run: Run) => {
     const runStatus = getRunStatus(run);
     const selectedRunGame = games[run.selectedGame];
     return (
@@ -108,7 +111,7 @@ const TimelineComponent = () => {
         <span className={classes.icon}>
           {selectedRunGame?.name}
         </span>
-        <span className={`${classes[runStatus.toLowerCase()]} ${classes.icon}`}>
+        <span className={`${(classes as any)[runStatus.toLowerCase()]} ${classes.icon}`}>
           {
             (runStatus === STATUS.FAILED ? displayCrossIcon() : (runStatus === STATUS.SUCCEEDED ? displayTickIcon() : null))
           }
@@ -116,12 +119,15 @@ const TimelineComponent = () => {
       </div >
     );
   }
-  const displayTimelineItem = (dateRuns = []) => {
+  const displayTimelineItem = (dateRuns: Run[] = []) => {
     const sortedRuns = dateRuns.sort((a, b) => (a.order - b.order));
     const firstRun = sortedRuns?.[0];
     const date = firstRun?.date;
+    if (!date) {
+      return (<></>);
+    }
     return (
-      <TimelineItem key={date}>
+      <TimelineItem key={date.toString()}>
         <TimelineOppositeContent>
           <div color="textSecondary" className={classes.date}>{date}</div>
         </TimelineOppositeContent>
@@ -129,7 +135,9 @@ const TimelineComponent = () => {
           <TimelineDot />
           <TimelineConnector />
         </TimelineSeparator>
-        <TimelineContent>
+        <TimelineContent classes={{
+          root: 'test1234'
+        }}>
           <Paper elevation={3} className={classes.paper} onClick={() => (displayDayResults(sortedRuns))}>
             {
               sortedRuns.map(run => { return displayRun(run); })
@@ -140,8 +148,8 @@ const TimelineComponent = () => {
     )
   };
   if (runs && runs.length > 0) {
-    const groupedRuns = runs.reduce((acc, run) => {
-      const dateExists = acc.find(item => {
+    const groupedRuns = runs.reduce((acc: DateRuns[], run) => {
+      const dateExists: DateRuns | undefined = acc.find((item: DateRuns) => {
         return item.date === run.date
       });
       if (dateExists) {
@@ -152,11 +160,14 @@ const TimelineComponent = () => {
       return acc;
     }, []);
     const sortedRuns = groupedRuns?.sort((run1, run2) => {
-      return (new Date(run1.date) - new Date(run2.date));
+      if (!run1.date || !run2.date) {
+        return 1;
+      }
+      return (+new Date(run1.date) - +new Date(run2.date))
     });
     return (
       <>
-        <Timeline align="alternate" className={classes.timeline}>
+        <Timeline position="alternate" className={classes.timeline}>
           {(sortedRuns.map(run => { return displayTimelineItem(run.runs) }))}
         </Timeline>
         {displayResult()}
@@ -165,7 +176,7 @@ const TimelineComponent = () => {
   }
   return (
     <div className={classes.loading}>
-      <CircularProgress className={classes.loader} />
+      <CircularProgress />
     </div>
   );
 };

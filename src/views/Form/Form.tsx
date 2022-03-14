@@ -1,11 +1,13 @@
-import React, { useState, useContext } from 'react';
-import { TextField, Select, InputLabel, MenuItem, Button, Icon, Checkbox, FormControlLabel, CircularProgress } from '@material-ui/core';
+import React, { useState, useContext, FormEvent } from 'react';
+import { TextField, Select, InputLabel, MenuItem, Button, Icon, Checkbox, FormControlLabel, CircularProgress, SelectChangeEvent } from '@mui/material';
 import { getDatabase, ref, child, push, update } from "firebase/database";
 import { getAuth, signInWithPopup, onAuthStateChanged, GoogleAuthProvider, signOut } from 'firebase/auth';
 
 import GamesContext from '../../store/games-context';
 import RunsContext from '../../store/runs-context';
 import UserContext from '../../store/user-context';
+import Game from '../../types/game';
+import Run from '../../types/run';
 import styles from './form.module.scss';
 
 const Form = () => {
@@ -15,26 +17,49 @@ const Form = () => {
   const games = gamesContext.games;
 
   const [includesHit, changeIncludesHit] = useState(false);
-  const [selectedGame, changeSelectedGame] = useState(0);
+  const [selectedGame, changeSelectedGame] = useState<number>(0);
   const [partial, changePartial] = useState(false);
-  const [date, updateDate] = useState('');
+  const [date, updateDate] = useState<Date | undefined>(undefined);
   const [order, updateOrder] = useState(1);
-  const [splitHit, updateHitSplit] = useState(undefined);
-  const [startSplit, updateStartSplit] = useState(undefined);
-  const [endSplit, updateEndSplit] = useState(undefined);
+  const [splitHit, updateHitSplit] = useState<number | undefined>(undefined);
+  const [splitHitString, updateHitSplitString] = useState<string | undefined>(undefined);
+  const [startSplit, updateStartSplit] = useState<number | undefined>(undefined);
+  const [startSplitString, updateStartSplitString] = useState<string | undefined>(undefined);
+  const [endSplit, updateEndSplit] = useState<number | undefined>(undefined);
+  const [endSplitString, updateEndSplitString] = useState<string | undefined>(undefined);
   const [clip, updateClip] = useState('');
 
   const auth = getAuth(userContext.firebaseApp);
   const provider = new GoogleAuthProvider();
 
-  onAuthStateChanged(auth, (user) => userContext.setUser(user));
+  const updateHitSplitSelector = (value: string) => {
+    updateHitSplitString(value);
+    updateHitSplit(parseInt(value, 10));
+  };
 
+  const updateStartSplitSelector = (value: string) => {
+    updateStartSplitString(value);
+    updateStartSplit(parseInt(value, 10));
+  };
+
+  const updateEndSplitSelector = (value: string) => {
+    updateEndSplitString(value);
+    updateEndSplit(parseInt(value, 10));
+  };
+
+  onAuthStateChanged(auth, (user) => {
+    if(!!userContext && !!userContext.setUser){
+      if(user) {
+        userContext.setUser(user);
+      }
+    }
+  });
 
   const resetForm = () => {
     changeIncludesHit(false);
     changeSelectedGame(0);
     changePartial(false);
-    updateDate('');
+    updateDate(undefined);
     updateOrder(1);
     updateHitSplit(undefined);
     updateStartSplit(undefined);
@@ -42,7 +67,7 @@ const Form = () => {
     updateClip('');
   };
 
-  const listSplits = (game) => {
+  const listSplits = (game: Game) => {
     const splitsSorted = game?.splits?.sort((split1, split2) => (split1.order - split2.order));
     return (splitsSorted?.map(split =>
       <MenuItem key={split.id} value={split.id}>{split.name}</MenuItem>
@@ -52,7 +77,7 @@ const Form = () => {
   const showHitSelector = () =>
   (<div className={styles.formitem} >
     <InputLabel id="splitHit">Split Hit</InputLabel>
-    <Select className={styles.select} labelId="splitHit" id="splitHitSelect" value={splitHit} onChange={e => updateHitSplit(e.target.value)}>
+    <Select className={styles.select} labelId="splitHit" id="splitHitSelect" value={splitHitString} onChange={(e: SelectChangeEvent)  => updateHitSplitSelector((e.target as HTMLSelectElement).value)}>
       {listSplits(games[selectedGame])}
     </Select>
 
@@ -63,13 +88,20 @@ const Form = () => {
     return (<>
       <div className={styles.formitem} >
         <InputLabel id="splitStart">Split Start</InputLabel>
-        <Select className={styles.select} labelId="splitStart" id="splitStartSelect" value={startSplit} onChange={e => updateStartSplit(e.target.value)}>
+        <Select 
+          className={styles.select}
+          labelId="splitStart"
+          id="splitStartSelect"
+          value={startSplitString} 
+          onChange={
+            (event: SelectChangeEvent) => updateStartSplitSelector(event.target.value)
+          }>
           {listSplits(games[selectedGame])}
         </Select>
       </div>
       <div className={styles.formitem} >
         <InputLabel id="splitEnds">Split End</InputLabel>
-        <Select labelId="splitEnd" id="splitEndSelect" value={endSplit} onChange={e => updateEndSplit(e.target.value)}>
+        <Select labelId="splitEnd" id="splitEndSelect" value={endSplitString} onChange={(e: SelectChangeEvent) => updateEndSplitSelector((e.target as HTMLSelectElement).value)}>
           {listSplits(games[selectedGame])}
         </Select>
       </div>
@@ -77,19 +109,23 @@ const Form = () => {
     );
   }
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    const globalWindow = (window as any);
     event.preventDefault();
-    const state = { date, selectedGame, includesHit, splitHit, clip, order, partial, endSplit, startSplit };
+    const state: Run = { date, selectedGame, includesHit, splitHit, clip, order, partial, endSplit, startSplit };
 
-    const db = getDatabase(window.firebaseApp);
-    const cleanUpState = JSON.parse(JSON.stringify(state));
+    const db = getDatabase(globalWindow.firebaseApp);
+    // const cleanUpState = JSON.parse(JSON.stringify(state));
     // Get a key for a new Run.
     const newRunKey = push(child(ref(db), 'run')).key;
     const updates = {};
-    updates['/run/' + newRunKey] = cleanUpState;
+    const runName  = `/run/${newRunKey}`;
+    (updates as any)[runName] = state;
     update(ref(db), updates).then(result => {
-      runsContext.addRun(state);
-      resetForm();
+      if (runsContext && runsContext.addRun) {
+        runsContext.addRun(state);
+        resetForm();
+      }
     }).catch(error => {
       console.log(`Error adding a new run: ${error}`);
     });
@@ -116,7 +152,7 @@ const Form = () => {
             type="date"
             className={styles.textField}
             value={date}
-            onInput={e => updateDate(e.target.value)}
+            onInput={e => updateDate(new Date((e.target as HTMLInputElement).value))}
             InputLabelProps={{
               shrink: true,
             }}
@@ -129,12 +165,15 @@ const Form = () => {
             type="number"
             className={styles.textField}
             value={order}
-            onInput={e => updateOrder(parseInt(e.target.value, 10))}
+            onInput={e => updateOrder(parseInt((e.target as HTMLInputElement).value, 10))}
           />
         </div>
         <div className={styles.formitem} >
           <InputLabel id="game">Game</InputLabel>
-          <Select className={styles.select} labelId="game" id="gameSelect" value={selectedGame} onChange={e => changeSelectedGame(e.target.value)}>
+          <Select className={styles.select} labelId="game" id="gameSelect" value={selectedGame} onChange={e => {
+            const value : string = (e.target as HTMLInputElement).value;
+            changeSelectedGame(parseInt(value, 10));
+          }}>
             {listGames}
           </Select>
         </div>
@@ -174,7 +213,7 @@ const Form = () => {
             : null)
         }
         <div className={styles.formitem} >
-          <TextField multiline rows={4} id="run-clip" label="Clip" className={styles.clip} value={clip} onInput={e => updateClip(e.target.value)} />
+          <TextField multiline rows={4} id="run-clip" label="Clip" className={styles.clip} value={clip} onInput={e => updateClip((e.target as HTMLInputElement).value)} />
         </div>
         <Button variant="contained" color="primary" endIcon={<Icon>send</Icon>} type="submit">
           Submit

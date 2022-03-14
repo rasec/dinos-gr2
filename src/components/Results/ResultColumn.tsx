@@ -2,10 +2,12 @@ import React, { useContext } from 'react';
 
 import GamesContext from '../../store/games-context';
 import { INITIAL_SPLIT_INDEX, FINAL_SPLIT_INDEX } from '../../utils/constants';
+import Run from '../../types/run';
+import Split from '../../types/split';
 
 import style from './result.module.css';
 
-const Result = ({ selectedGame, includesHit, splitHit, clip, startSplit = 0, endSplit = 15 }) => {
+const Result = ({ selectedGame, includesHit, splitHit, clip, startSplit = 0, endSplit = 15 }: Run) => {
   const gamesContext = useContext(GamesContext);
   const games = gamesContext.games;
 
@@ -13,15 +15,15 @@ const Result = ({ selectedGame, includesHit, splitHit, clip, startSplit = 0, end
   const resultEndSplit = endSplit === null ? (FINAL_SPLIT_INDEX + 1) : endSplit;
   const selectedGameObject = games[selectedGame];
   const renderSplits = () => {
-    const splitsOrdered = selectedGameObject?.splits?.sort((split1, split2) => (split1.order - split2.order));
-    let splitHitObject = {};
-    let splitHitOrder;
-    if(splitHit >= 0) {
-      splitHitObject = splitsOrdered.find(split => split.id === splitHit);
+    const splitsOrdered = selectedGameObject.splits.sort((split1, split2) => (split1.order - split2.order));
+    let splitHitObject : Split = {} as Split;
+    let splitHitOrder : number;
+    if(!!splitHit && splitHit >= 0) {
+      splitHitObject = splitsOrdered.find(split => split.id === splitHit) as Split;
       splitHitOrder = splitHitObject.order;
     }
     return (splitsOrdered?.map(split => {
-      let className;
+      let className : string = '';
       
       if (includesHit) {
         if (split.order < splitHitOrder && split.id >= resultStartSplit && split.id <= resultEndSplit) {
@@ -44,7 +46,7 @@ const Result = ({ selectedGame, includesHit, splitHit, clip, startSplit = 0, end
     }));
   };
 
-  const renderClip = (gameClassName) => {
+  const renderClip = (gameClassName: string) => {
     if (clip) {
       return (<a href={clip} target={'_blank'} rel={'noreferrer'} className={style[gameClassName]}>Clip</a>);
     }
@@ -53,7 +55,7 @@ const Result = ({ selectedGame, includesHit, splitHit, clip, startSplit = 0, end
 
   const renderGame = () => {
     const isParcial = resultEndSplit < FINAL_SPLIT_INDEX;
-    const gameClassName = includesHit ? 'fail' : !isParcial ? 'success' : null;
+    const gameClassName = includesHit ? 'fail' : !isParcial ? 'success' : '';
     return (
       <div className={`${style.run} ${style.column}`}>
         <div className={style.header}>

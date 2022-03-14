@@ -1,9 +1,11 @@
-import { Modal } from '@material-ui/core';
+import { Modal } from '@mui/material';
+
+import Run from '../../types/run';
 
 import Results from './Results';
 import styles from './result.module.css';
 
-function ResultModal({ runs, onClose, hasToShowResults }) {
+function ResultModal({ runs, onClose, hasToShowResults }: { runs: Run[], onClose: any, hasToShowResults: boolean }) {
   return (<div>
     <Modal
       open={hasToShowResults}
