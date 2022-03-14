@@ -1,9 +1,13 @@
 import React from 'react';
 import T from 'prop-types';
+import Split, { SplitHit } from '../../types/split';
+import Run from '../../types/run';
+
 import styles from './statistics.components.module.scss';
 
-function GameTable({ gameShortName, logo, totalRuns = [], splits = [], onSplitHitClick }) {
-  const displayRow = ({ splitId, splitName, splitHits, totalHits }) => {
+function GameTable({ gameShortName, logo, totalRuns = [], splits = [], onSplitHitClick }: { gameShortName: string, logo: string, totalRuns: Run[], splits: Split[], onSplitHitClick: any }) {
+  /** TODO: check if a type fits here */
+  const displayRow = ({ splitId, splitName, splitHits, totalHits }: { splitId: number, splitName: string, splitHits: SplitHit[], totalHits: number}) => {
     const hasHit = (totalHits > 0);
     return (
       <tr className={`${styles.row} ${hasHit ? styles.hit : ''}`} key={splitId} onClick={() => {
@@ -14,10 +18,10 @@ function GameTable({ gameShortName, logo, totalRuns = [], splits = [], onSplitHi
       </tr>
     )
   }
-  const displayRowPerSplit = (totalRuns, splits) => {
+  const displayRowPerSplit = (totalRuns : Run[], splits: Split[]) => {
     return splits.map(split => {
       let totalHits = 0;
-      let splitHits = [];
+      let splitHits = [] as SplitHit[];
       const {name: splitName, id: splitId } = split;
       totalRuns.forEach(run => {
         if (split.id === run.splitHit) {

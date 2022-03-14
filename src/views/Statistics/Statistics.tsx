@@ -4,6 +4,9 @@ import { Chart } from "react-google-charts";
 import GamesContext from '../../store/games-context';
 import RunsContext from '../../store/runs-context';
 
+import Run, { StatRuns } from '../../types/run';
+import Game from '../../types/game';
+
 import GameTable from '../../components/Statistics/GameTable';
 import FilterForm from '../../components/Statistics/FilterForm';
 import StatTable from '../../components/Statistics/StatTable';
@@ -17,19 +20,32 @@ import ds3Logo from '../../static/img/ds3.png';
 import desLogo from '../../static/img/des.png';
 import bbLogo from '../../static/img/bb.png';
 import skLogo from '../../static/img/sekiro.png';
+import Split from '../../types/split';
+
+interface Variant {
+  [key: string]: string;
+}
+
+interface TotalRunsVariant {
+  [key: string]: Run[];
+}
+
+interface GameSplitVariant {
+  [key: string]: Split[];
+}
 
 const logos = {
-  DS1: ds1Logo,
-  DS2: ds2Logo,
-  DS3: ds3Logo,
-  DeS: desLogo,
-  BB: bbLogo,
-  SK: skLogo,
+  'DS1': ds1Logo,
+  'DS2': ds2Logo,
+  'DS3': ds3Logo,
+  'DeS': desLogo,
+  'BB': bbLogo,
+  'SK': skLogo,
 };
 
-const getRunsByGameNumber = (runs) => {
+const getRunsByGameNumber = (runs: Run[]) => {
   const checkFunctions = [isRunFirstGame, isRunSecondGame, isRunThridGame, isRunFourthGame, isRunFifthGame, isRunLastGame];
-  const runsByGameNumber = [[], [], [], [], [], []];
+  const runsByGameNumber = [[] as Run[], [] as Run[], [] as Run[], [] as Run[], [] as Run[], [] as Run[]];
 
   const clearedRuns = runs.filter((run) => run.endSplit === undefined);
   clearedRuns.forEach((run, index) => {
@@ -42,7 +58,7 @@ const getRunsByGameNumber = (runs) => {
   return runsByGameNumber;
 };
 
-const isNGame = ({ run, index, runs, previousRuns }) => {
+const isNGame = ({ run, index, runs, previousRuns }: { run: Run, index: number, runs: Run[], previousRuns: number }) => {
   // Run is minor that the current number (it is 3th run and we check for game 3, 4, 5, 6)
   if (index < previousRuns) {
     return false;
@@ -60,15 +76,15 @@ const isNGame = ({ run, index, runs, previousRuns }) => {
   return isNGame;
 };
 
-const isRunFirstGame = ({ run, index, runs }) => isNGame({ run, index, runs, previousRuns: 0 });
-const isRunSecondGame = ({ run, index, runs }) => isNGame({ run, index, runs, previousRuns: 1 });
-const isRunThridGame = ({ run, index, runs }) => isNGame({ run, index, runs, previousRuns: 2 });
-const isRunFourthGame = ({ run, index, runs }) => isNGame({ run, index, runs, previousRuns: 3 });
-const isRunFifthGame = ({ run, index, runs }) => isNGame({ run, index, runs, previousRuns: 4 });
-const isRunLastGame = ({ run, index, runs }) => isNGame({ run, index, runs, previousRuns: 5 });
+const isRunFirstGame = ({ run, index, runs }: { run: Run, index: number, runs: Run[] }) => isNGame({ run, index, runs, previousRuns: 0 });
+const isRunSecondGame = ({ run, index, runs }: { run: Run, index: number, runs: Run[] }) => isNGame({ run, index, runs, previousRuns: 1 });
+const isRunThridGame = ({ run, index, runs }: { run: Run, index: number, runs: Run[] }) => isNGame({ run, index, runs, previousRuns: 2 });
+const isRunFourthGame = ({ run, index, runs }: { run: Run, index: number, runs: Run[] }) => isNGame({ run, index, runs, previousRuns: 3 });
+const isRunFifthGame = ({ run, index, runs }: { run: Run, index: number, runs: Run[] }) => isNGame({ run, index, runs, previousRuns: 4 });
+const isRunLastGame = ({ run, index, runs }: { run: Run, index: number, runs: Run[] }) => isNGame({ run, index, runs, previousRuns: 5 });
 
 
-const getGamesSplits = games => {
+const getGamesSplits = (games: Game[]) => {
   const DS1Splits = games[0].splits;
   const DS2Splits = games[1].splits;
   const DS3Splits = games[2].splits;
@@ -85,7 +101,7 @@ const getGamesSplits = games => {
   };
 }
 
-const getTotalRuns = filteredRunsNoPartial => {
+const getTotalRuns = (filteredRunsNoPartial: Run[]) => {
   const totalDS1Runs = filteredRunsNoPartial.filter(run => {
     return (run.selectedGame === 0);
   });
@@ -128,8 +144,8 @@ const Statistics = () => {
   const runs = runsContext.runs;
   const [initialDate, setInitalDate] = useState('2021-09-20');
   const [endDate, setEndDate] = useState(null);
-  const [splitHits, setSplitHits] = useState([]);
-  const [succeedGameRuns, setSucceedGameRuns] = useState([]);
+  const [splitHits, setSplitHits] = useState<Split[]>([] as Split[]);
+  const [succeedGameRuns, setSucceedGameRuns] = useState<Run[]>([] as Run[]);
   const [currentSplitName, setCurrentSplitName] = useState('');
   const [currentGameName, setCurrentGameName] = useState('');
 
@@ -137,18 +153,33 @@ const Statistics = () => {
 
     const gamesSplits = getGamesSplits(games);
 
-    const runsSortedByDate = runs.sort((run1, run2) => {
-      const run1Date = new Date(run1.date);
-      const run2Date = new Date(run2.date);
-      const run1DateOrder = run1Date.getTime() + run1.order;
-      const run2DateOrder = run2Date.getTime() + run2.order;
+    const runsSortedByDate = runs.sort((run1: Run, run2: Run) => {
+      const run1Date = run1.date;
+      const run2Date = run2.date;
+      let run1DateOrder: number = 0, run2DateOrder: number = 0;
+      if (run1Date) {
+        run1DateOrder = new Date(run1Date).getTime() + run1.order;
+      }
+      if (run2Date) {
+        run2DateOrder = new Date(run2Date).getTime() + run2.order;
+      }
       return run1DateOrder - run2DateOrder;
     });
 
 
-    let filteredRuns = runsSortedByDate.filter(run => (new Date(run.date) >= new Date(initialDate)));
+    let filteredRuns = runsSortedByDate.filter(run => {
+      if (run && run.date) {
+        return (new Date(run.date).getTime() >= new Date(initialDate).getTime())
+      }
+      return false;
+    });
     if (endDate) {
-      filteredRuns = filteredRuns.filter(run => (new Date(run.date) <= new Date(endDate)));
+      filteredRuns = filteredRuns.filter(run => {
+        if (run && run.date) {
+          return (run.date <= new Date(endDate));
+        }
+        return false
+      });
     }
 
     const runsByGameNumber = getRunsByGameNumber(filteredRuns);
@@ -175,7 +206,7 @@ const Statistics = () => {
       totalSKRuns
     } = totalRuns;
 
-    const onSplitHitClick = (splitHits) => {
+    const onSplitHitClick = (splitHits: Split[]) => {
       setSplitHits(splitHits);
       setCurrentSplitName(splitHits[0].name);
     }
@@ -231,12 +262,12 @@ const Statistics = () => {
       }
     ];
 
-    const statRowItemClickHandler = (successfulRuns, text) => {
+    const statRowItemClickHandler = (successfulRuns: Run[], text: string) => {
       setSucceedGameRuns(successfulRuns);
       setCurrentGameName(text);
     };
 
-    let chatData = [['Game', 'Value']];
+    let chatData: any[][] = [['Game', 'Value']];
 
     gameStats.forEach((gameStat, index) => {
       if (index === 0) {
@@ -246,8 +277,8 @@ const Statistics = () => {
       chatData.push([gameStat.displayText, calculateSuccessRate({ successfulRuns, totalRuns: gameStat.runs })]);
     });
 
-    const getPerGameData = (gameStats) => {
-      const perGameData = [['Game', 'Successful Runs']];
+    const getPerGameData = (gameStats: StatRuns[]) => {
+      const perGameData: any[][] = [['Game', 'Successful Runs']];
       gameStats.forEach((gameStat, index) => {
         if (index === 0) {
           return;// remove All stats
@@ -258,8 +289,8 @@ const Statistics = () => {
       return perGameData;
     }
 
-    const getPerGameOrderData = (gameOrderStats) => {
-      const perGameData = [['Game', 'Successful Runs']];
+    const getPerGameOrderData = (gameOrderStats: StatRuns[]) => {
+      const perGameData: any[][] = [['Game', 'Successful Runs']];
       gameOrderStats.forEach((gameNumberStat, index) => {
         if (index === 0) {
           return;// remove All stats
@@ -349,8 +380,10 @@ const Statistics = () => {
           </div>
           <div className={styles.splitStats}>
             {games.map(game => {
-              const logo = logos[game.acronym];
-              return (<GameTable onSplitHitClick={onSplitHitClick} gameName={game.name} gameShortName={game.acronym} logo={logo} totalRuns={totalRuns[`total${game.acronym}Runs`]} splits={gamesSplits[`${game.acronym}Splits`]} />);
+              const logo = (logos as Variant)[game.acronym];
+              const totalRunsItem = (totalRuns as TotalRunsVariant)[`total${game.acronym}Runs`];
+              const splits = (gamesSplits as GameSplitVariant)[`${game.acronym}Splits`];
+              return (<GameTable onSplitHitClick={onSplitHitClick} gameShortName={game.acronym} logo={logo} totalRuns={totalRunsItem} splits={splits} />);
             })
             }
           </div>

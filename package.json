@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@material-ui/core": "^4.11.3",
-    "@material-ui/icons": "^4.11.2",
-    "@material-ui/lab": "^4.0.0-alpha.57",
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
+    "@mui/lab": "^5.0.0-alpha.65",
+    "@mui/material": "^5.3.0",
+    "@mui/styles": "^5.3.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "@types/react": "^17.0.38",
+    "@types/react-dom": "^17.0.11",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "firebase": "^9.4.1",
@@ -18,10 +22,11 @@
     "node-sass": "^4.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "react-google-charts": "^3.0.15",
+    "react-google-charts": "^4.0.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
-    "react-timeseries-charts": "^0.16.1",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.4",
     "web-vitals": "^0.2.4"
   },
   "scripts": {
@@ -29,7 +34,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "start:server": "node server/server.js"
+    "ts:build": "tsc -p tsconfig.json"
   },
   "eslintConfig": {
     "extends": [
@@ -50,6 +55,7 @@
     ]
   },
   "devDependencies": {
+    "@types/react-router-dom": "^5.3.3",
     "npm-run-all": "^4.1.5"
   }
 }

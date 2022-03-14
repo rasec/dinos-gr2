@@ -1,9 +1,10 @@
 import styles from './statistics.components.module.scss';
 import { successRunFilter, calculateSuccessRate } from '../../utils/utils';
+import Run, { StatRuns } from '../../types/run';
 
-function StatTable({ runsList, onClickHandler }) {
+function StatTable({ runsList, onClickHandler }: {runsList: StatRuns[], onClickHandler: any }) {
 
-  const displayRunsAndPercentage = (successfulRuns, totalRuns) => {
+  const displayRunsAndPercentage = (successfulRuns: Run[], totalRuns: Run[]) => {
     if (totalRuns.length === 0) {
       return '-';
     }

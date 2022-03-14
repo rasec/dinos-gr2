@@ -7,11 +7,14 @@ import {
   Link
 } from "react-router-dom";
 
+import Game from './types/game';
+import Run from './types/run';
+
 import { initializeApp } from 'firebase/app';
 
 import GamesContext from './store/games-context';
 import RunsContext from './store/runs-context';
-import UserContext from './store/user-context';
+import UserContext, { UserContextType } from './store/user-context';
 
 import Form from './views/Form/Form';
 import Timeline from './views/Timeline/Timeline';
@@ -25,13 +28,13 @@ import './App.css';
 export default function App() {
   const gamesContext = useContext(GamesContext);
   const runsContext = useContext(RunsContext);
-  const userContext = useContext(UserContext);
+  const userContext: UserContextType = useContext(UserContext);
 
   const [firebaseInitialized, setFirebaseInitialized] = useState(false);
 
   if (!firebaseInitialized && userContext) {
     const firebaseApp = initializeApp(firebaseConfig);
-    userContext.setFirebaseApp(firebaseApp);
+    userContext?.setFirebaseApp?.(firebaseApp);
     setFirebaseInitialized(true);
   }
 
@@ -40,20 +43,25 @@ export default function App() {
       fetch('https://dino-gr2-default-rtdb.europe-west1.firebasedatabase.app/games.json',)
         .then(response => response.json())
         .then(games => {
-          const sortedGames = games.sort((a, b) => (a.id - b.id));
-          gamesContext.setGames(sortedGames);
+          const sortedGames = games.sort((a: Game, b: Game) => (a.id - b.id));
+          gamesContext.setGames?.(sortedGames);
         });
     }
     if (!runsContext.runs || runsContext.runs.length <= 0) {
       fetch('https://dino-gr2-default-rtdb.europe-west1.firebasedatabase.app/run.json',)
         .then(response => response.json())
-        .then(runsResponse => runsContext.setRuns(Object.values(runsResponse)));
+        .then(runsResponse => {
+          if (runsResponse && runsContext.setRuns) {
+            const runs: Run[] = (Object.values(runsResponse) as Run[]);
+            runsContext?.setRuns(runs);
+          }
+        });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
-  if (!firebaseInitialized || !userContext.firebaseApp.name) {
+  if (!firebaseInitialized || !userContext.firebaseApp || !("name" in userContext.firebaseApp)) {
     return (<>Loading...</>);
   }
   return (
